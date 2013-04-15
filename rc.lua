@@ -138,49 +138,42 @@ for s = 1, screen.count() do
    tags[s] = awful.tag(tags.names, s, tags.layout)
 end
 -- }}}
-                                          
--- {{{ Menu
-myaccessories = {
-   { "archives", "7zFM" },
-   { "file manager", "spacefm" },
-   { "editor", gui_editor },
+ 
+myawesomemenu = {
+--   { "manual", "terminator -x man awesome" },
+--   { "edit config", "terminator -x vim /home/bradomyn/.config/awesome/rc.lua"},
+   { "manual", terminal .. " -e man awesome" },
+   { "edit config", editor_cmd .. " " .. awful.util.getdir("config") .. "/rc.lua" },
+   { "restart", awesome.restart },
+   { "quit", awesome.quit },
+   { "poweroff", "su -c poweroff" },
+   { "reboot", "su -c reboot"},
+   { "lock screen", "gnome-screensaver-command -l"}
 }
-myinternet = {
-    { "browser", browser },
-    { "irc client" , chat },
-    { "torrent" , "rtorrent" },
-    { "torrtux" , terminal .. " -e torrtux " },
-    { "torrent search" , "torrent-search" }
+
+rag_bag = {
+	{ "Calculator", "gcalctool" },
+	{ "vlc", vlc },
 }
-mygames = {
-    { "NES", "fceux" },
-    { "Super NES", "zsnes" },
-}
-mygraphics = {
-    { "gimp" , "gimp" },
-    { "inkscape", "inkscape" },
-    { "dia", "dia" },
-    { "image viewer" , "viewnior" }
-}
-myoffice = {
-    { "writer" , "lowriter" },
-    { "impress" , "loimpress" }
-}
+
 mysystem = {
     { "appearance" , "lxappearance" },
     { "cleaning" , "bleachbit" },
-    { "powertop" , terminal .. " -e sudo powertop " },
+    { "powertop" , terminal .. " -e su -c powertop " },
     { "task manager" , tasks }
 }
+
 mymainmenu = awful.menu({ items = {
-				    { "accessories" , myaccessories },
-				    { "graphics" , mygraphics },
-				    { "internet" , myinternet },
-				    { "games" , mygames },
-				    { "office" , myoffice },
-				    { "system" , mysystem },
-            }
-            })
+	{ "open terminal", terminal },
+    { "chromium", "chromium --allow-outdated-plugins --memory-model=low" },
+    { "Rag-Bag",ragbag  },
+	{ "spotify", "spotify" },
+	{ "system", mysystem },
+	{ "awesome", myawesomemenu, beautiful.awesome_icon }
+ }
+ })
+
+
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                      menu = mymainmenu })
 -- }}}
@@ -704,6 +697,7 @@ end
 -- {{{ Mouse Bindings
 
 root.buttons(awful.util.table.join(
+    awful.button({ }, 3, function () mymainmenu:toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
 ))
