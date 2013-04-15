@@ -345,8 +345,6 @@ vicious.register(weatherwidget, vicious.widgets.weather,
             return ''
         end
     end, 2)
-
-
 -- /home fs widget
 fshicon = wibox.widget.imagebox()
 fshicon:set_image(theme.confdir .. "/widgets/fs.png")
@@ -500,13 +498,15 @@ netdownicon = wibox.widget.imagebox()
 netdownicon:set_image(beautiful.widget_netdown)
 netdownicon.align = "middle"
 netdowninfo = wibox.widget.textbox()
-vicious.register(netdowninfo, vicious.widgets.net, green .. "${wlan0 down_kb}" .. coldef, 1)
+--vicious.register(netdowninfo, vicious.widgets.net, green .. "${wlan0 down_kb}" .. coldef, 1)
+vicious.register(netdowninfo, vicious.widgets.net, green .. "${eth0 down_kb}" .. coldef, 1)
 netupicon = wibox.widget.imagebox()
 netupicon:set_image(beautiful.widget_netup)
 netupicon.align = "middle"
 netupinfo = wibox.widget.textbox()
-vicious.register(netupinfo, vicious.widgets.net, red .. "${wlan0 up_kb}" .. coldef, 1)
-
+--vicious.register(netupinfo, vicious.widgets.net, red .. "${wlan0 up_mb}" .. coldef, 1)
+vicious.register(netupinfo, vicious.widgets.net, green .. "${eth0 up_kb}" .. coldef, 1)
+--
 -- Memory widget
 memicon = wibox.widget.imagebox()
 memicon:set_image(beautiful.widget_mem)
