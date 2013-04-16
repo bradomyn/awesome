@@ -17,6 +17,7 @@ beautiful       = require("beautiful")
 naughty         = require("naughty")
 vicious         = require("vicious")
 scratch         = require("scratch")
+perceptive      = require("perceptive")
 
 -- }}}
 
@@ -313,21 +314,18 @@ mytextclock:buttons(util.table.join( awful.button({ }, 1, function() show(-1) en
 weathericon = wibox.widget.imagebox()
 weathericon:set_image(theme.confdir .. "/widgets/dish.png")
 weatherwidget = wibox.widget.textbox()
+perceptive.register(643787)
+
+weather_t = awful.tooltip({ objects = { weatherwidget },})
+
 vicious.register(weatherwidget, vicious.widgets.weather,
-    function (widget, args)
-        if args["{tempf}"] == "N/A" then
-            return "No Info"
-        else
-            -- Italian localization
-            -- work in progress
-            if( args["{sky}"] == "N/A" ) then args["{sky}"] = "sereno"
-            elseif( args["{sky}"] == "Clear" ) then args["{sky}"] = "sereno"
-            elseif( args["{sky}"] == "Cloudy" ) then args["{sky}"] = "nuvoloso"
-            elseif( args["{sky}"] == "Mostly Cloudy" ) then args["{sky}"] = "molto nuvoloso"
-            end
-            return "" .. lightpurple .. args["{sky}"] .. " @ " .. args["{tempc}"] .. "°C" .. coldef .. ""
-        end
-    end, 1800, "EDES" )
+                function (widget, args)
+                    weather_t:set_text("City: " .. args["{city}"] .."\nWind: " .. args["{windkmh}"] .. "km/h " 
+                                                .. args["{wind}"] .. "\nSky: " .. args["{sky}"] .. "\nHumidity: " 
+                                                .. args["{humid}"] .. "%")
+                    return args["{tempc}"] .. "C"
+                end, 1800, "EDDF")
+
 -- spotify 
     spotifywidget = wibox.widget.textbox()
     
@@ -356,7 +354,7 @@ fshwidget = wibox.widget.textbox()
         else
             return azure .. args["{/home used_p}"] .. "%" .. coldef
         end
-    end, 620)
+    end, 3600)
 
 local infos = nil
 
@@ -399,35 +397,38 @@ vicious.register(uptimewidget, vicious.widgets.uptime, brown .. "$2.$3" .. colde
 mygmail = wibox.widget.textbox()
 gmail_t = awful.tooltip({ objects = { mygmail },})
 mygmailimg = wibox.widget.imagebox(beautiful.widget_gmail)
-vicious.register(mygmail, vicious.widgets.gmail,
-                function (widget, args)
-                    gmail_t:set_text(args["{subject}"])
-                    gmail_t:add_to_object(mygmailimg)
-                    return args["{count}"]
-                 end, 60)
+
+vicious.register(mygmail, vicious.widgets.mutt,"$1%", 300)
+
+--vicious.register(mygmail, vicious.widgets.gmail,
+--                function (widget, args)
+--                    gmail_t:set_text(args["{subject}"])
+--                    gmail_t:add_to_object(mygmailimg)
+--                    return args["{count}"]
+--                 end, 2)
 mygmail:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.util.spawn(mail, false) end)))
 
 -- CPU widget
 cpuicon = wibox.widget.imagebox()
 cpuicon:set_image(beautiful.widget_cpu)
 cpuwidget = wibox.widget.textbox()
-vicious.register(cpuwidget, vicious.widgets.cpu, purple .. "$1%" .. coldef, 3)
+vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 3)
 cpuicon:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.util.spawn(tasks, false) end)))
 
 -- Temp widget
 tempicon = wibox.widget.imagebox()
 tempicon:set_image(beautiful.widget_temp)
 tempicon:buttons(awful.util.table.join(
-    awful.button({ }, 1, function () awful.util.spawn(terminal .. " -e sudo powertop ", false) end)
+    awful.button({ }, 1, function () awful.util.spawn(terminal .. " -e su -c powertop ", false) end)
     ))
    tempwidget = wibox.widget.textbox()
-   vicious.register(tempwidget, vicious.widgets.thermal, "<span color=\"#f1af5f\">$1°C</span>", 9, {"coretemp.0", "core"} )
+   vicious.register(tempwidget, vicious.widgets.thermal_easy, "<span color=\"#f1af5f\">$1 C</span>", 60, {"", "core"} )
 
 -- Battery widget
 baticon = wibox.widget.imagebox()
 baticon:set_image(beautiful.widget_batt)
 batwidget = wibox.widget.textbox()
-vicious.register( batwidget, vicious.widgets.bat, "$2", 1, "BAT0")
+vicious.register( batwidget, vicious.widgets.bat, "$2", 60, "BAT0")
 
 function batstate()
 
@@ -492,19 +493,19 @@ netdownicon:set_image(beautiful.widget_netdown)
 netdownicon.align = "middle"
 netdowninfo = wibox.widget.textbox()
 --vicious.register(netdowninfo, vicious.widgets.net, green .. "${wlan0 down_kb}" .. coldef, 1)
-vicious.register(netdowninfo, vicious.widgets.net, green .. "${eth0 down_kb}" .. coldef, 1)
+vicious.register(netdowninfo, vicious.widgets.net, green .. "${eth0 down_kb}" .. coldef, 15)
 netupicon = wibox.widget.imagebox()
 netupicon:set_image(beautiful.widget_netup)
 netupicon.align = "middle"
 netupinfo = wibox.widget.textbox()
 --vicious.register(netupinfo, vicious.widgets.net, red .. "${wlan0 up_mb}" .. coldef, 1)
-vicious.register(netupinfo, vicious.widgets.net, green .. "${eth0 up_kb}" .. coldef, 1)
+vicious.register(netupinfo, vicious.widgets.net, green .. "${eth0 up_kb}" .. coldef, 15)
 --
 -- Memory widget
 memicon = wibox.widget.imagebox()
 memicon:set_image(beautiful.widget_mem)
 memwidget = wibox.widget.textbox()
-vicious.register(memwidget, vicious.widgets.mem, yellow .. "$2M" .. coldef, 1)
+vicious.register(memwidget, vicious.widgets.mem, yellow .. "$2M" .. coldef, 60)
 
 -- MPD Widget
 mpdwidget = wibox.widget.textbox()
@@ -647,6 +648,9 @@ for s = 1, screen.count() do
     right_layout:add(uptimewidget) 
     right_layout:add(spacer)
     right_layout:add(weathericon)
+    right_layout:add(perceptive.icon)
+    right_layout:add(perceptive.widget)
+    right_layout:add(spacer)
     right_layout:add(weatherwidget)
     right_layout:add(spacer)
     right_layout:add(tempicon)
@@ -733,9 +737,8 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "w", function () mymainmenu:show({keygrabber=true}) end),
 
     -- Show/Hide Wibox
-    awful.key({ modkey }, "b", function ()
-    mywibox[mouse.screen].visible = not mywibox[mouse.screen].visible
-    end),
+    awful.key({ modkey }, "p", function ()
+    mywibox[mouse.screen].visible = not mywibox[mouse.screen].visible end),
 
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end),
@@ -753,6 +756,7 @@ globalkeys = awful.util.table.join(
 
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
+    awful.key({ modkey,           }, "b",      function () awful.util.spawn(chromium) end),
     awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)     end),
