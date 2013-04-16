@@ -1,0 +1,24 @@
+#!/usr/bin/python2
+import sys
+
+def gmail_checker(username,password):
+        import imaplib,re
+        i=imaplib.IMAP4_SSL('imap2010.gsi.de')
+        try:
+                i.login(username,password)
+                x,y=i.status('INBOX','(MESSAGES UNSEEN)')
+                messages=int(re.search('MESSAGES\s+(\d+)',y[0]).group(1))
+                unseen=int(re.search('UNSEEN\s+(\d+)',y[0]).group(1))
+                return (unseen-1049)
+        except:
+                return False,0
+
+def main():
+
+    print gmail_checker('cprados','cesar251980')
+
+if __name__ == '__main__': 
+    main() 
+
+
+
