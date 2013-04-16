@@ -1,0 +1,4 @@
+for the vicious widgets, install 
+    pacman -S vicious
+
+and put my_vicious in /usr/share/awesome/lib/vicious/widgets
