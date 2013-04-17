@@ -335,7 +335,7 @@ vicious.register(weatherwidget, vicious.widgets.weather,
         else
             return ''
         end
-    end, 2)
+    end, 10)
 -- /home fs widget
 fshicon = wibox.widget.imagebox()
 fshicon:set_image(theme.confdir .. "/widgets/fs.png")
@@ -391,7 +391,7 @@ fshwidget:connect_signal('mouse::leave', function () remove_info() end)
 uptimeicon = wibox.widget.imagebox()
 uptimeicon:set_image(beautiful.widget_uptime)
 uptimewidget = wibox.widget.textbox()
-vicious.register(uptimewidget, vicious.widgets.uptime, brown .. "$2.$3" .. coldef)
+vicious.register(uptimewidget, vicious.widgets.uptime, brown .. "$2.$3" .. coldef,60)
 
 -- Gmail widget
 mygmail = wibox.widget.textbox()
@@ -412,7 +412,7 @@ mygmail:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.uti
 cpuicon = wibox.widget.imagebox()
 cpuicon:set_image(beautiful.widget_cpu)
 cpuwidget = wibox.widget.textbox()
-vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 3)
+vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 10)
 cpuicon:buttons(awful.util.table.join(awful.button({ }, 1, function () awful.util.spawn(tasks, false) end)))
 
 -- Temp widget
@@ -479,13 +479,13 @@ vicious.register(batwidget, vicious.widgets.bat,
                })
           end
           return " " .. args[2] .. "% "
-     end, 1, 'BAT0')
+     end, 60, 'BAT0')
 
 -- Volume widget
 volicon = wibox.widget.imagebox()
 volicon:set_image(beautiful.widget_vol)
 volumewidget = wibox.widget.textbox()
-vicious.register(volumewidget, vicious.widgets.volume, blue .. "$1%" .. coldef,  1, "Master")
+vicious.register(volumewidget, vicious.widgets.volume, blue .. "$1%" .. coldef,  0, "Master")
 
 -- Net widget
 netdownicon = wibox.widget.imagebox()
@@ -500,7 +500,7 @@ netupicon.align = "middle"
 netupinfo = wibox.widget.textbox()
 --vicious.register(netupinfo, vicious.widgets.net, red .. "${wlan0 up_mb}" .. coldef, 1)
 vicious.register(netupinfo, vicious.widgets.net, green .. "${eth0 up_kb}" .. coldef, 15)
---
+
 -- Memory widget
 memicon = wibox.widget.imagebox()
 memicon:set_image(beautiful.widget_mem)
@@ -508,27 +508,27 @@ memwidget = wibox.widget.textbox()
 vicious.register(memwidget, vicious.widgets.mem, yellow .. "$2M" .. coldef, 60)
 
 -- MPD Widget
-mpdwidget = wibox.widget.textbox()
-mpdicon = wibox.widget.imagebox()
-mpdicon:set_image(theme.confdir .. "/widgets/note.png")
-
-vicious.register(mpdwidget, vicious.widgets.mpd,
-function(widget, args)
-	-- play
-	if (args["{state}"] == "Play") then
-		return red .. args["{Title}"] .. coldef .. colwhi .. " - " .. coldef .. colwhi  .. 
-		args["{Artist}"] .. coldef
-	-- pause
-	elseif (args["{state}"] == "Pause") then
-		return red .. "mpd</span>" .. colwhi .." paused</span>"
-	-- stop
-	elseif (args["{state}"] == "Stop") then
-		return red .. "mpd</span>" .. colwhi .." stopped</span>"
-	-- not running
-	else
-		return red .. "mpd</span>" .. colwhi .." off</span>"
-	end
-	end, 1)
+--mpdwidget = wibox.widget.textbox()
+--mpdicon = wibox.widget.imagebox()
+--mpdicon:set_image(theme.confdir .. "/widgets/note.png")
+--
+--vicious.register(mpdwidget, vicious.widgets.mpd,
+--function(widget, args)
+--	-- play
+--	if (args["{state}"] == "Play") then
+--		return red .. args["{Title}"] .. coldef .. colwhi .. " - " .. coldef .. colwhi  .. 
+--		args["{Artist}"] .. coldef
+--	-- pause
+--	elseif (args["{state}"] == "Pause") then
+--		return red .. "mpd</span>" .. colwhi .." paused</span>"
+--	-- stop
+--	elseif (args["{state}"] == "Stop") then
+--		return red .. "mpd</span>" .. colwhi .." stopped</span>"
+--	-- not running
+--	else
+--		return red .. "mpd</span>" .. colwhi .." off</span>"
+--	end
+--	end, 1)
 
 -- Spacer
 spacer = wibox.widget.textbox(" ")
@@ -661,7 +661,7 @@ for s = 1, screen.count() do
     right_layout:add(spacer)     
     right_layout:add(baticon)
     right_layout:add(batwidget)
-    --right_layout:add(spacer)
+    right_layout:add(spacer)
     right_layout:add(clockicon)
     right_layout:add(mytextclock)
     --right_layout:add(mylayoutbox[s])
@@ -756,7 +756,7 @@ globalkeys = awful.util.table.join(
 
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
-    awful.key({ modkey,           }, "b",      function () awful.util.spawn(chromium) end),
+    awful.key({ modkey,           }, "b",      function () awful.util.spawn("chromium") end),
     awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)     end),
